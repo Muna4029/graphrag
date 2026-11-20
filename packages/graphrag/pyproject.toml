@@ -23,6 +23,8 @@ authors = [
 ]
 license = "MIT"
 readme = "README.md"
+
+# README.md file is required for the package build process.
 requires-python = ">=3.10,<3.13"
 classifiers = [
     "Programming Language :: Python :: 3",
