@@ -127,7 +127,9 @@ class ChatModel(Protocol):
         -------
             A generator that yields strings representing the response.
         """
-        yield ""  # Yield an empty string so that the function is recognized as a generator
+        # Keep the function recognized as an async generator for typing purposes
+        if False:
+            yield ""
         ...
 
     def chat(
@@ -163,4 +165,7 @@ class ChatModel(Protocol):
         -------
             A generator that yields strings representing the response.
         """
+        # Keep the function recognized as a generator for typing purposes
+        if False:
+            yield ""
         ...

@@ -63,7 +63,8 @@ class InMemoryCache(PipelineCache):
             - key - The key to delete.
         """
         key = self._create_cache_key(key)
-        del self._cache[key]
+        # Use pop with a default to avoid raising KeyError if the key does not exist
+        self._cache.pop(key, None)
 
     async def clear(self) -> None:
         """Clear the storage."""
@@ -71,7 +72,8 @@ class InMemoryCache(PipelineCache):
 
     def child(self, name: str) -> PipelineCache:
         """Create a sub cache with the given name."""
-        return InMemoryCache(name)
+        # Preserve parent namespace when creating a child cache so child keys are namespaced
+        return InMemoryCache(f"{self._name}{name}")
 
     def _create_cache_key(self, key: str) -> str:
         """Create a cache key for the given key."""

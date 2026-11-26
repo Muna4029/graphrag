@@ -151,7 +151,9 @@ async def _dump_json(context: PipelineRunContext) -> None:
     try:
         state_blob = json.dumps(context.state, indent=4, ensure_ascii=False)
     finally:
-        if temp_context:
+        # Restore the additional_context even if it's an empty mapping ({}).
+        # Using explicit None check ensures we don't lose an intentionally empty dict.
+        if temp_context is not None:
             context.state["additional_context"] = temp_context
 
     await context.output_storage.set("context.json", state_blob)

@@ -37,7 +37,10 @@ def _group_and_resolve_entities(
         suffixes=("_B", "_A"),
         copy=False,
     )
-    id_mapping = dict(zip(merged["id_B"], merged["id_A"], strict=True))
+    # Create id mapping {id_B: id_A}. Use zip without the 'strict' keyword for
+    # compatibility with Python versions where zip(..., strict=True) is not available.
+    # If duplicate id_B values exist, the first occurrence will be kept.
+    id_mapping = dict(zip(merged["id_B"], merged["id_A"]))
 
     # Increment human readable id in b by the max of a
     initial_id = old_entities_df["human_readable_id"].max() + 1

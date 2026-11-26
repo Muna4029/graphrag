@@ -6,7 +6,7 @@
 class ApiKeyMissingError(ValueError):
     """LLM Key missing error."""
 
-    def __init__(self, llm_type: str, azure_auth_type: str | None = None) -> None:
+    def __init__(self, llm_type: str, azure_auth_type = None) -> None:
         """Init method definition."""
         msg = f"API Key is required for {llm_type}"
         if azure_auth_type:

@@ -120,4 +120,6 @@ class RegexENNounPhraseExtractor(BaseNounPhraseExtractor):
 
     def __str__(self) -> str:
         """Return string representation of the extractor, used for cache key generation."""
-        return f"regex_en_{self.exclude_nouns}_{self.max_word_length}_{self.word_delimiter}"
+        # Use a tuple for exclude_nouns to ensure a stable, deterministic
+        # string representation (lists may render differently across runs).
+        return f"regex_en_{tuple(self.exclude_nouns)}_{self.max_word_length}_{self.word_delimiter}"

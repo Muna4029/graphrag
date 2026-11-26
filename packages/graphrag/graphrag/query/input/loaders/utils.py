@@ -42,7 +42,7 @@ def to_str(data: Mapping[str, Any], column_name: str | None) -> str:
 
 def to_optional_str(data: Mapping[str, Any], column_name: str | None) -> str | None:
     """Convert and validate a value to an optional string."""
-    value = _get_value(data, column_name, required=True)
+    value = _get_value(data, column_name, required=False)
     return None if value is None else str(value)
 
 

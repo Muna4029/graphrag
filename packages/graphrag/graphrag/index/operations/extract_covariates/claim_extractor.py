@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 class ClaimExtractorResult:
     """Claim extractor result class definition."""
 
-    output: list[dict]
+    output: list[dict[str, Any]]
     source_docs: dict[str, Any]
 
 
@@ -69,8 +69,8 @@ class ClaimExtractor:
         claim_description,
     ) -> ClaimExtractorResult:
         """Call method definition."""
-        source_doc_map = {}
-        all_claims: list[dict] = []
+        source_doc_map: dict[str, Any] = {}
+        all_claims: list[dict[str, Any]] = []
         for doc_index, text in enumerate(texts):
             document_id = f"d{doc_index}"
             try:

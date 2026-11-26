@@ -29,7 +29,7 @@ class CFGNounPhraseExtractor(BaseNounPhraseExtractor):
         exclude_pos_tags: list[str],
         exclude_nouns: list[str],
         word_delimiter: str,
-        noun_phrase_grammars: dict[tuple, str],
+        noun_phrase_grammars: dict[tuple[str, str], str],
         noun_phrase_tags: list[str],
     ):
         """
