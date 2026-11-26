@@ -79,7 +79,18 @@ def cleanup(skip: bool = False):
                 raise
             finally:
                 if not skip:
-                    root = Path(kwargs["input_path"])
+                    # input_path may be provided positionally (e.g., as the second arg when method is called on self)
+                    input_path = kwargs.get("input_path")
+                    if input_path is None:
+                        # try to find a plausible path argument among positional args
+                        for a in args:
+                            if isinstance(a, (str, Path)):
+                                input_path = a
+                                break
+                    if input_path is None:
+                        # Nothing we can clean up
+                        return None
+                    root = Path(input_path)
                     shutil.rmtree(root / "output", ignore_errors=True)
                     shutil.rmtree(root / "cache", ignore_errors=True)
 
@@ -142,9 +153,20 @@ class TestIndexer:
         ]
         command = [arg for arg in command if arg]
         logger.info("running command ", " ".join(command))
-        completion = subprocess.run(command, env=os.environ)
+        # Ensure we do not pass None values into the child environment (mock.patch.dict may have inserted None)
+        safe_env = {k: v for k, v in os.environ.items() if v is not None}
+        completion = subprocess.run(
+            command,
+            env=safe_env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        if completion.returncode != 0:
+            logger.error("Indexer stdout:\n%s", completion.stdout)
+            logger.error("Indexer stderr:\n%s", completion.stderr)
         assert completion.returncode == 0, (
-            f"Indexer failed with return code: {completion.returncode}"
+            f"Indexer failed with return code: {completion.returncode}\nstdout:\n{completion.stdout}\nstderr:\n{completion.stderr}"
         )
 
     def __assert_indexer_outputs(
@@ -241,6 +263,12 @@ class TestIndexer:
         if workflow_config.get("skip"):
             print(f"skipping smoke test {input_path})")
             return
+
+        # Normalize any patched environment values that may have been set to None
+        # (mock.patch.dict may have injected None values which break subprocess env)
+        for k in list(os.environ.keys()):
+            if os.environ.get(k) is None:
+                os.environ.pop(k, None)
 
         azure = workflow_config.get("azure")
         root = Path(input_path)
